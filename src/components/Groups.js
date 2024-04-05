@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { myContext } from "./MainContainer";
 import { refreshSidebarFun } from "../Features/refreshSidebar";
 import RefreshIcon from '@mui/icons-material/Refresh';
+import envProperty from "../environment";
 
 function Groups() {
   const lightTheme = useSelector((state) => state.themeKey);
@@ -31,7 +32,7 @@ function Groups() {
     console.log("user effect");
 
     axios
-      .get("http://localhost:4201/chat/fetchGroups/", config)
+      .get(`${envProperty.url}chat/fetchGroups/`, config)
       .then((response) => {
         console.log(response.data);
         setGroupList(response.data);
@@ -90,7 +91,7 @@ function Groups() {
                 };
 
                 axios.put(
-                  "http://localhost:4201/chat/addSelfToGroup/",
+                 ` ${envProperty.url}chat/addSelfToGroup/`,
                   {
                     chatId: group._id,
                     userId: userData.data._id,

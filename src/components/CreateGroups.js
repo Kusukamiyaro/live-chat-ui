@@ -4,6 +4,7 @@ import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import envProperty from '../environment';
 function CreateGroups() {
   const navigate = useNavigate();
   const lightTheme = useSelector((state) => state.themeKey);
@@ -29,7 +30,7 @@ const createGroupChat=( )=>{
   const config = {
     headers:{Authorization:`Bearer ${userData.data.token}`}
   }
-  axios.post('http://localhost:4201/chat/createGroup',{
+  axios.post(`${envProperty.url}/chat/createGroup`,{
     name:groupName,
     users:'["65b4aa24b3eb21b52f0ec3a5","65b4aa24b3eb21b52f0ec3a5","65b63ce4bdacec4ff99de94d"]'
   },

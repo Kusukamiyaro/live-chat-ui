@@ -9,6 +9,7 @@ import axios from "axios";
 import { myContext } from "./MainContainer";
 import  { refreshSidebarFun } from "../Features/refreshSidebar";
 import RefreshIcon from '@mui/icons-material/Refresh';
+import envProperty from "../environment";
 function Users() {
   const lightTheme = useSelector((state) => state.themeKey);
   const {refresh, setRefresh} = useContext(myContext);
@@ -85,7 +86,7 @@ function Users() {
                   const config = {
                     headers:{Authorization:`Bearer ${userData.data.token}`}
                   }
-                  axios.post('http://localhost:4201/chat/',{userId:user._id},
+                  axios.post(`${envProperty.url}chat/`,{userId:user._id},
                   config).then(({data})=>{console.log(data);
                     navigate("/app/chat/" + data._id + "&" + data.chatName)
                   }).catch(e=>console.log(e));

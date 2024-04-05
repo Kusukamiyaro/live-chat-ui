@@ -14,6 +14,7 @@ import { toggleTheme } from "../Features/themeSlice";
 import LogoutIcon from "@mui/icons-material/Logout";
 import axios from "axios";
 import { myContext } from "./MainContainer";
+import envProperty from "../environment";
 function Sidebar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -29,7 +30,7 @@ function Sidebar() {
     const config = {
       headers: { Authorization: `Bearer ${userData.data.token}` },
     };
-    axios.get("http://localhost:4201/chat/", config).then((response) => {
+    axios.get(`${envProperty.url}chat/`, config).then((response) => {
       console.log("side bar data",response);
       setConverstation(response.data);
     });

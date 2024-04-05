@@ -10,6 +10,7 @@ import io from "socket.io-client";
 
 import axios from "axios";
 import { myContext } from "./MainContainer";
+import envProperty from "../environment";
 const ENDPOINT = "http://localhost:4201";
 var socket, chat;
 function ChatArea() {
@@ -41,7 +42,7 @@ function ChatArea() {
 
     axios
       .post(
-        "http://localhost:4201/message/",
+        `${envProperty.url}message/`,
         {
           content: messageContent,
           chatId: chat_id,
@@ -63,7 +64,7 @@ function ChatArea() {
     console.log("user effect");
 
     axios
-      .get("http://localhost:4201/message/" + chat_id, config)
+      .get(`${envProperty.url}message/` + chat_id, config)
       .then((response) => {
         console.log(response.data);
         setAllMessages(response.data);
@@ -95,7 +96,7 @@ function ChatArea() {
           Authorization: `Bearer ${userData.data.token}`,
         },
       };
-   axios.put('http://localhost:4201/message/groupExit',{
+   axios.put(`${envProperty.url}groupExit`,{
     userId : userData.data._id,
     chatId:  chat_id
    },config);

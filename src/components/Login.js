@@ -10,6 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Toaster from "./Toaster";
+import envProperty from "../environment";
 function Login() {
   const [showLogin, setShowLogin] = useState(false);
   const [data, setData] = useState({
@@ -38,7 +39,7 @@ function Login() {
         },
       };
       const respose = await axios
-        .post("http://localhost:4201/user/login", data, config)
+        .post(`${envProperty.url}user/login`, data, config)
         .then((response) => {
           localStorage.setItem("userData", JSON.stringify(response));
           console.log("logged", response);
@@ -71,7 +72,7 @@ function Login() {
         },
       };
       const respose = await axios
-        .post("http://localhost:4201/user/register", data, config)
+        .post(`${envProperty.url}user/register`, data, config)
         .then((result) => {
           console.log(result);
 

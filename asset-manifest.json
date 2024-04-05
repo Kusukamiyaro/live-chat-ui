@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/live-chat-ui/static/css/main.3a2d1da1.css",
+    "main.js": "/live-chat-ui/static/js/main.916d0e8b.js",
+    "static/media/Logo.png": "/live-chat-ui/static/media/Logo.4abc3971dd36f3676fd2.png",
+    "index.html": "/live-chat-ui/index.html",
+    "main.3a2d1da1.css.map": "/live-chat-ui/static/css/main.3a2d1da1.css.map",
+    "main.916d0e8b.js.map": "/live-chat-ui/static/js/main.916d0e8b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3a2d1da1.css",
+    "static/js/main.916d0e8b.js"
+  ]
+}

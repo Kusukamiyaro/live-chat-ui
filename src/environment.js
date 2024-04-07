@@ -1,4 +1,4 @@
 const envProperty ={
-    url : 'https://live-chat-app-beryl.vercel.app/'
+    url : 'http://142.93.222.157:4201'
 }
 module.exports = envProperty;

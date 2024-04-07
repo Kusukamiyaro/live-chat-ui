@@ -2,6 +2,7 @@
   "name": "live-chat-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://kusukamiyaro.github.io/live-chat-ui/",
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -27,7 +28,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d public"
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [

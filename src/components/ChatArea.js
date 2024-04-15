@@ -42,7 +42,7 @@ function ChatArea() {
 
     axios
       .post(
-        `${envProperty.url}message/`,
+        `${envProperty.url}/message/`,
         {
           content: messageContent,
           chatId: chat_id,
@@ -64,7 +64,7 @@ function ChatArea() {
     console.log("user effect");
 
     axios
-      .get(`${envProperty.url}message/` + chat_id, config)
+      .get(`${envProperty.url}/message/` + chat_id, config)
       .then((response) => {
         console.log(response.data);
         setAllMessages(response.data);
@@ -96,7 +96,7 @@ function ChatArea() {
           Authorization: `Bearer ${userData.data.token}`,
         },
       };
-   axios.put(`${envProperty.url}groupExit`,{
+   axios.put(`${envProperty.url}/groupExit`,{
     userId : userData.data._id,
     chatId:  chat_id
    },config);
@@ -172,7 +172,7 @@ function ChatArea() {
                
               }}
               onKeyDown={(e) => {
-                if (e.code == "Enter") {
+                if (e.code === "Enter") {
                   sendMessage();
                   setMessageContent("");
                   setRefresh(!refresh);

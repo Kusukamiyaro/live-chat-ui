@@ -35,11 +35,11 @@ function Login() {
     try {
       const config = {
         Headers: {
-          "Content-type": "application.json",
+          "Content-type": "application/json",
         },
       };
       const respose = await axios
-        .post(`${envProperty.url}user/login`, data, config)
+        .post(`${envProperty.url}/user/login`, data, config)
         .then((response) => {
           localStorage.setItem("userData", JSON.stringify(response));
           console.log("logged", response);
@@ -68,11 +68,11 @@ function Login() {
     try {
       const config = {
         Headers: {
-          "Content-type": "application.json",
+          "Content-type": "application/json",
         },
       };
       const respose = await axios
-        .post(`${envProperty.url}user/register`, data, config)
+        .post(`${envProperty.url}/user/register`, data, config)
         .then((result) => {
           console.log(result);
 
@@ -124,7 +124,7 @@ function Login() {
               color="secondary"
               name="name"
               onKeyDown={(event) => {
-                if (event.code == "Enter") {
+                if (event.code === "Enter") {
                   // console.log(event);
                   logInHandler();
                 }
@@ -139,7 +139,7 @@ function Login() {
               color="secondary"
               name="password"
               onKeyDown={(event) => {
-                if (event.code == "Enter") {
+                if (event.code === "Enter") {
                   // console.log(event);
                   logInHandler();
                 }
@@ -151,13 +151,13 @@ function Login() {
             </Button>
             <p>
               Don't have an Account?{" "}
-              <span
+              <a style={{color:"gray",cursor:"pointer"}}
                 onClick={() => {
                   setShowLogin(false);
                 }}
               >
                 Sign Up
-              </span>
+              </a>
             </p>
             {logInStatus ? (
               <Toaster key={logInStatus.key} messsage={logInStatus.msg} />
@@ -179,7 +179,7 @@ function Login() {
               color="secondary"
               name="name"
               onKeyDown={(event) => {
-                if (event.code == "Enter") {
+                if (event.code === "Enter") {
                   // console.log(event);
                   logInHandler();
                 }
@@ -193,7 +193,7 @@ function Login() {
               color="secondary"
               name="email"
               onKeyDown={(event) => {
-                if (event.code == "Enter") {
+                if (event.code === "Enter") {
                   // console.log(event);
                   logInHandler();
                 }
@@ -208,7 +208,7 @@ function Login() {
               color="secondary"
               name="password"
               onKeyDown={(event) => {
-                if (event.code == "Enter") {
+                if (event.code === "Enter") {
                   // console.log(event);
                   logInHandler();
                 }
@@ -224,13 +224,13 @@ function Login() {
             </Button>
             <p>
               Already have an account?{" "}
-              <span
+              <a  style={{color:"gray",cursor:"pointer"}}
                 onClick={() => {
                   setShowLogin(true);
                 }}
               >
-                LOGIN
-              </span>
+                Login
+              </a>
             </p>
             {signInStatus ? (
               <Toaster key={signInStatus.key} messsage={signInStatus.msg} />

@@ -32,7 +32,7 @@ function Groups() {
     console.log("user effect");
 
     axios
-      .get(`${envProperty.url}chat/fetchGroups/`, config)
+      .get(`${envProperty.url}/chat/fetchGroups/`, config)
       .then((response) => {
         console.log(response.data);
         setGroupList(response.data);
@@ -91,7 +91,7 @@ function Groups() {
                 };
 
                 axios.put(
-                 ` ${envProperty.url}chat/addSelfToGroup/`,
+                 ` ${envProperty.url}/chat/addSelfToGroup/`,
                   {
                     chatId: group._id,
                     userId: userData.data._id,

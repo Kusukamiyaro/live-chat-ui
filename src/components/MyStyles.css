@@ -1,3 +1,27 @@
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+    
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: none; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 2px; 
+    height: 60%;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+    width: 5px;
+  }
+
 .dark {
     background-color: #2d2941 !important;
     color: whitesmoke !important;
@@ -89,9 +113,14 @@
 .conversation-container:hover {
     background-color: #ddf;
 }
-
+.conversation-container .dark:hover {
+    background-color: #413e53;
+}
 .conversation-container:active {
     background-color: white;
+}
+.conversation-container .darak:active {
+    background-color: #413e53;
 }
 
 .convo-icon {
@@ -274,6 +303,7 @@
     border-bottom: 5px solid purple;
     border-top: 5px solid purple;
     border-radius: 20px;
+    overflow: auto;
 }
 
 .image-container {

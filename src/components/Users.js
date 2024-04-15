@@ -30,7 +30,7 @@ function Users() {
     console.log("user effect");
 
     axios
-      .get("http://localhost:4201/user/fetchUsers", config)
+      .get(`${envProperty.url}/user/fetchUsers`, config)
       .then((response) => {
         console.log(response.data);
         setUsersList(response.data);
@@ -86,7 +86,7 @@ function Users() {
                   const config = {
                     headers:{Authorization:`Bearer ${userData.data.token}`}
                   }
-                  axios.post(`${envProperty.url}chat/`,{userId:user._id},
+                  axios.post(`${envProperty.url}/chat/`,{userId:user._id},
                   config).then(({data})=>{console.log(data);
                     navigate("/app/chat/" + data._id + "&" + data.chatName)
                   }).catch(e=>console.log(e));

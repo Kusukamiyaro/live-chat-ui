@@ -15,35 +15,64 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import axios from "axios";
 import { myContext } from "./MainContainer";
 import envProperty from "../environment";
+import { Autocomplete, TextField } from "@mui/material";
 function Sidebar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const lightTheme = useSelector((state) => state.themeKey);
-  const userData = JSON.parse(localStorage.getItem('userData'))
+  const userData = JSON.parse(localStorage.getItem("userData"));
   const { refresh, setRefresh } = useContext(myContext);
   const [conversations, setConverstation] = useState([]);
+  const [searchedUsers, setSearcheddUser] = useState([]);
+  const [selectedChat, setSelectedChat] = useState({});
   function logOutHandler() {
     localStorage.setItem("userData", "");
     navigate("/");
   }
+  function searchUser(event) {
+    console.log(event);
+    const config = {
+      headers: { Authorization: `Bearer ${userData.data.token}` },
+    };
+    axios
+      .post(`${envProperty.url}/user/search`, { username: event }, config)
+      .then((response) => {
+        console.log("users", response);
+        setSearcheddUser(response.data);
+      });
+  }
+  const selectedConvo = (e, newval) => {
+    console.log("val", newval);
+    const user = searchedUsers.find((user) => user.name === newval);
+
+    console.log(user);
+    const config = {
+      headers: { Authorization: `Bearer ${userData.data.token}` },
+    };
+    axios
+      .post(`${envProperty.url}/chat/`, { userId: user._id }, config)
+      .then(({ data }) => {
+        console.log("data", data);
+        navigate("/app/chat/" + data._id + "&" + data.chatName);
+      })
+      .catch((e) => console.log(e));
+    //do dispatch here
+  };
   useEffect(() => {
     const config = {
       headers: { Authorization: `Bearer ${userData.data.token}` },
     };
-    axios.get(`${envProperty.url}chat/`, config).then((response) => {
-      console.log("side bar data",response);
+    axios.get(`${envProperty.url}/chat/`, config).then((response) => {
+      console.log("side bar data", response);
       setConverstation(response.data);
     });
-  },[refresh]);
-  
+  }, [refresh]);
 
   return (
     <div className={"sideBar-container" + (lightTheme ? "" : " dark")}>
       <div className={"sb-Header" + (lightTheme ? "" : " dark")}>
-        
         <div className={"other-icons" + (lightTheme ? "" : " dark")}>
-         
-        <IconButton>
+          <IconButton>
             <AccountCircleIcon
               className={"icon" + (lightTheme ? "" : " dark")}
             />
@@ -84,7 +113,7 @@ function Sidebar() {
             )}
           </IconButton>
           <IconButton onClick={logOutHandler}>
-            <LogoutIcon className={"icon" + (lightTheme ? "" : " dark")}  />
+            <LogoutIcon className={"icon" + (lightTheme ? "" : " dark")} />
           </IconButton>
         </div>
       </div>
@@ -92,67 +121,99 @@ function Sidebar() {
         <IconButton>
           <SearchIcon />
         </IconButton>
-        <input
-          placeholder="search"
+        <Autocomplete
+          freeSolo
+          id="free-solo-2-demo"
+          disableClearable
+          options={searchedUsers.map((option) => option.name)}
+          onChange={selectedConvo}
+          onInputCapture={(e) => searchUser(e.target.value)}
           className={"search-box" + (lightTheme ? "" : " dark")}
+          renderInput={(params) => (
+            <TextField
+              fullWidth
+              {...params}
+              label="Search User"
+              autoFocus="false"
+              InputProps={{
+                ...params.InputProps,
+                type: "search",
+              }}
+            />
+          )}
         />
+        {/* <input
+          placeholder="search" onChange={(e)=>searchUser(e.target.value)}
+          className={"search-box" + (lightTheme ? "" : " dark")}
+        /> */}
       </div>
       <div className={"sb-conversations" + (lightTheme ? "" : " dark")}>
         {conversations.map((convo, i) => {
-          console.log("conversations",convo);
+          console.log("conversations", convo);
           var chatName = "";
           if (convo.users.length === 1) {
             return <div key={i}></div>;
           }
-          if (convo.isGroupChat) {
+          if (convo.isGroupChat=="true") {
             chatName = convo.chatName;
+            console.log("group chat",convo)
           } else {
             convo.users.map((user) => {
               if (user._id !== userData.data._id) {
                 chatName = user.name;
+                console.log(chatName);
               }
             });
           }
           if (convo.latestMessage === undefined) {
             return (
-              <div key={i}
-              onClick={() => {
-                console.log("Refresh fired from sidebar");
-                // dispatch(refreshSidebarFun());
-                setRefresh(!refresh);
-              }} 
-              >
-
-              <div  className="conversation-container"
+              <div
                 key={i}
                 onClick={() => {
-                  navigate("/app/chat/" + convo._id + "&" + convo.users[1].name);
+                  console.log("Refresh fired from sidebar");
+                  // dispatch(refreshSidebarFun());
+                  setRefresh(!refresh);
                 }}
               >
-                <p className={"convo-icon" + (lightTheme ? "" : " dark")}>
-                  {" "}
-                  {convo.users[1].name[0]}
-                </p>
-                <p className={"convo-title" + (lightTheme ? "" : " dark")}>
-                  {" "}
-                  {convo.users[1].name}
-                </p>
-                <p
-                  className={"convo-lastMessage" + (lightTheme ? "" : " dark")}
+                <div
+                  className="conversation-container"
+                  key={i}
+                  onClick={() => {
+                   
+                      navigate(
+                        "/app/chat/" + convo._id + "&" + chatName
+                      );
+                    
+                  }}
                 >
-                  {" "}
-                  No previous Message, click here to start a new chat
-                </p>
-              </div>
-
+                  <p className={"convo-icon" + (lightTheme ? "" : " dark")}>
+                    {" "}
+                    {chatName[0]}
+                  </p>
+                  <p className={"convo-title" + (lightTheme ? "" : " dark")}>
+                    {" "}
+                    {chatName}
+                  </p>
+                  <p
+                    className={
+                      "convo-lastMessage" + (lightTheme ? "" : " dark")
+                    }
+                  >
+                    {" "}
+                    No previous Message, click here to start a new chat
+                  </p>
+                </div>
               </div>
             );
           } else {
             return (
-              <div  className="conversation-container"
+              <div
+                className="conversation-container"
                 key={i}
                 onClick={() => {
-                  navigate("/app/chat/" + convo._id + "&" + convo.users[1].name);
+                  navigate(
+                    "/app/chat/" + convo._id + "&" + convo.users[1].name
+                  );
                 }}
               >
                 <p className={"convo-icon" + (lightTheme ? "" : " dark")}>

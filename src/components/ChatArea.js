@@ -5,8 +5,9 @@ import SendIcon from "@mui/icons-material/Send";
 import MessageSelf from "./MessageSelf";
 import MessageOthers from "./MessageOthers";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client";
+import { refreshSidebarFun } from "../Features/refreshSidebar";
 
 import axios from "axios";
 import { myContext } from "./MainContainer";
@@ -16,7 +17,7 @@ var socket, chat;
 function ChatArea() {
   const lightTheme = useSelector((state) => state.themeKey);
   const { refresh, setRefresh } = useContext(myContext);
-
+  const dispatch = useDispatch();
   const [messageContent, setMessageContent] = useState("");
   const [allMessages, setAllMessages] = useState([]);
   const [loaded, setLoaded] = useState(false);
@@ -38,7 +39,7 @@ function ChatArea() {
         Authorization: `Bearer ${userData.data.token}`,
       },
     };
-    console.log("user effect",messageContent);
+    console.log("user effect", messageContent);
 
     axios
       .post(
@@ -50,7 +51,7 @@ function ChatArea() {
         config
       )
       .then((res) => {
-        console.log("mssg sent",res);
+        console.log("mssg sent", res);
         data = res.data;
       });
     // socket.emit("new message", data);
@@ -81,26 +82,35 @@ function ChatArea() {
     socket.on("connection", () => {
       setSocketConnectionStatus(!socketConnectionStatus);
     });
-  }, {});
+  }, []);
   useEffect(() => {
     socket.on("message recieved", (newmessage) => {
       if (!allMessagesCopy || allMessagesCopy._id !== newmessage._id) {
       } else {
-        setAllMessages([...allMessages], newmessage);
+        setAllMessages([...allMessages, newmessage]);
       }
     });
-  });
-  const deleteChat=() =>{
+  }, []);
+  const deleteChat = () => {
     const config = {
-        headers: {
-          Authorization: `Bearer ${userData.data.token}`,
+      headers: {
+        Authorization: `Bearer ${userData.data.token}`,
+      },
+    };
+    axios
+      .put(
+        `${envProperty.url}/chat/groupExit`,
+        {
+          userId: userData.data._id,
+          chatId: chat_id,
         },
-      };
-   axios.put(`${envProperty.url}/groupExit`,{
-    userId : userData.data._id,
-    chatId:  chat_id
-   },config);
-  }
+        config
+      )
+      .then((resp) => {
+        dispatch(refreshSidebarFun());
+        navigate("/app/groups" );
+      });
+  };
   if (!loaded) {
     return (
       <div
@@ -133,64 +143,65 @@ function ChatArea() {
         />
       </div>
     );
-  }else{
-
-      return (
-        <div className={"chatArea-container"  + (lightTheme ? "" : " dark")}>
-          <div className={"chartArea-header" + (lightTheme ? "" : " dark")}>
-            <p className={"convo-icon"  + (lightTheme ? "" : " dark")}>{chat_user[0]}</p>
-            <div className={"header-text"  + (lightTheme ? "" : " dark")}>
-              <p className={"convo-title" + (lightTheme ? "" : " dark")}>{chat_user}</p>
-              {/* <p className="conco-timestamp">{conversations.timeStamp}</p> */}
-            </div>
-            <IconButton>
-              <DeleteIcon />
-            </IconButton>
+  } else {
+    return (
+      <div className={"chatArea-container" + (lightTheme ? "" : " dark")}>
+        <div className={"chartArea-header" + (lightTheme ? "" : " dark")}>
+          <p className={"convo-icon" + (lightTheme ? "" : " dark")}>
+            {chat_user[0]}
+          </p>
+          <div className={"header-text" + (lightTheme ? "" : " dark")}>
+            <p className={"convo-title" + (lightTheme ? "" : " dark")}>
+              {chat_user}
+            </p>
+            {/* <p className="conco-timestamp">{conversations.timeStamp}</p> */}
           </div>
-          <div className={"message-container"  + (lightTheme ? "" : " dark")}>
-            {allMessages
-              .slice(0)
-              .reverse()
-              .map((message, index) => {
-
-                const sender = message.sender;
-                const self_id = userData.data._id;
-                if (sender._id !== self_id) {
-                  return <MessageOthers props={message} key={index} />;
-                } else {
-                  return <MessageSelf props={message} key={index} />;
-                }
-              })}
-          </div>
-          <div className={"text-input-area" + (lightTheme ? "" : " dark")}>
-            <input
-              placeholder="Type a Message"
-              className={"search-box" + (lightTheme ? "" : " dark")}
-              value={messageContent}
-              onChange={(e) => {
-                setMessageContent(e.target.value);
-               
-              }}
-              onKeyDown={(e) => {
-                if (e.code === "Enter") {
-                  sendMessage();
-                  setMessageContent("");
-                  setRefresh(!refresh);
-                }
-              }}
-            />
-            <IconButton
-              className={"icon" + (lightTheme ? "" : " dark")}
-              onClick={() => {
-                sendMessage();
-                setRefresh(!refresh);
-              }}
-            >
-              <SendIcon />
-            </IconButton>
-          </div>
+          <IconButton>
+            <DeleteIcon onClick={deleteChat} />
+          </IconButton>
         </div>
-      );
+        <div className={"message-container" + (lightTheme ? "" : " dark")}>
+          {allMessages
+            .slice(0)
+            .reverse()
+            .map((message, index) => {
+              const sender = message.sender;
+              const self_id = userData.data._id;
+              if (sender._id !== self_id) {
+                return <MessageOthers props={message} key={index} />;
+              } else {
+                return <MessageSelf props={message} key={index} />;
+              }
+            })}
+        </div>
+        <div className={"text-input-area" + (lightTheme ? "" : " dark")}>
+          <input
+            placeholder="Type a Message"
+            className={"search-box" + (lightTheme ? "" : " dark")}
+            value={messageContent}
+            onChange={(e) => {
+              setMessageContent(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.code === "Enter") {
+                sendMessage();
+                setMessageContent("");
+                setRefresh(!refresh);
+              }
+            }}
+          />
+          <IconButton
+            className={"icon" + (lightTheme ? "" : " dark")}
+            onClick={() => {
+              sendMessage();
+              setRefresh(!refresh);
+            }}
+          >
+            <SendIcon />
+          </IconButton>
+        </div>
+      </div>
+    );
   }
 }
 

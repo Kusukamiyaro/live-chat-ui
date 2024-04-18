@@ -13,6 +13,7 @@ import envProperty from "../environment";
 
 function Groups() {
   const lightTheme = useSelector((state) => state.themeKey);
+  console.log("myContext",myContext);
   const {refresh, setRefresh} = useContext(myContext);
   const dispatch = useDispatch();
 
@@ -21,6 +22,23 @@ function Groups() {
   const navigate = useNavigate();
   if (!userData) {
     navigate(-1);
+  }
+  function searchGroups(event) {
+    console.log(event);
+    const config = {
+      headers: { Authorization: `Bearer ${userData.data.token}` },
+    };
+    axios
+      .post(
+        `${envProperty.url}/chat/fetchGroupsByName`,
+        { username: event.target.value },
+        config
+      )
+      .then((response) => {
+        console.log("users", response);
+        setGroupList(response.data);
+        setRefresh(refresh)
+      });
   }
   useEffect(() => {
     console.log("user effect");
@@ -71,6 +89,7 @@ function Groups() {
           </IconButton>
           <input
             placeholder="search"
+            onChange={searchGroups}
             className={"search-box" + (lightTheme ? "" : " dark")}
           />
         </div>
@@ -99,8 +118,8 @@ function Groups() {
                   config
                 );
                 
-                dispatch(refreshSidebarFun())
-                navigate( navigate("/app/chat/" + group._id + "&" + group.chatName))
+                dispatch(refreshSidebarFun());
+                ( navigate("/app/chat/" + group._id + "&" + group.chatName))
               }}
             >
               <p className={"convo-icon" + (lightTheme ? "" : " dark")}>{group.chatName[0]}</p>

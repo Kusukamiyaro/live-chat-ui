@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import logo from "../Logo.png";
-import { Autocomplete, IconButton, TextField } from "@mui/material";
+import { IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDispatch, useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { myContext } from "./MainContainer";
-import { refreshSidebarFun } from "../Features/refreshSidebar";
-import RefreshIcon from "@mui/icons-material/Refresh";
+import  { refreshSidebarFun } from "../Features/refreshSidebar";
+import RefreshIcon from '@mui/icons-material/Refresh';
 import envProperty from "../environment";
 function Users() {
   const lightTheme = useSelector((state) => state.themeKey);
-  const { refresh, setRefresh } = useContext(myContext);
+  const {refresh, setRefresh} = useContext(myContext);
   const dispatch = useDispatch();
   const [usersList, setUsersList] = useState([]);
   const userData = JSON.parse(localStorage.getItem("userData"));
@@ -20,23 +20,6 @@ function Users() {
   if (!userData) {
     navigate(-1);
   }
-  function searchUser(event) {
-    console.log(event);
-    const config = {
-      headers: { Authorization: `Bearer ${userData.data.token}` },
-    };
-    axios
-      .post(
-        `${envProperty.url}/user/search`,
-        { username: event.target.value },
-        config
-      )
-      .then((response) => {
-        console.log("users", response);
-        setUsersList(response.data);
-      });
-  }
-
   useEffect(() => {
     console.log("user effect");
     const config = {
@@ -81,12 +64,12 @@ function Users() {
           </IconButton>
         </div>
         <div className={"sb-search" + (lightTheme ? "" : " dark")}>
-          <IconButton>
+          <IconButton
+          >
             <SearchIcon />
           </IconButton>
           <input
             placeholder="search"
-            onChange={searchUser}
             className={"search-box" + (lightTheme ? "" : " dark")}
           />
         </div>
@@ -99,25 +82,20 @@ function Users() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className={"list-item" + (lightTheme ? "" : " dark")}
-                onClick={() => {
+                onClick={()=>{
                   const config = {
-                    headers: { Authorization: `Bearer ${userData.data.token}` },
-                  };
-                  axios
-                    .post(
-                      `${envProperty.url}/chat/`,
-                      { userId: user._id },
-                      config
-                    )
-                    .then(({ data }) => {
-                      console.log(data);
-                      navigate("/app/chat/" + data._id + "&" + data.chatName);
-                    })
-                    .catch((e) => console.log(e));
+                    headers:{Authorization:`Bearer ${userData.data.token}`}
+                  }
+                  axios.post(`${envProperty.url}/chat/`,{userId:user._id},
+                  config).then(({data})=>{console.log(data);
+                    navigate("/app/chat/" + data._id + "&" + data.chatName)
+                  }).catch(e=>console.log(e));
                   //do dispatch here
 
                   dispatch(refreshSidebarFun());
+                 
                 }}
+
               >
                 <p className={"convo-icon" + (lightTheme ? "" : " dark")}>
                   {user.name[0]}
